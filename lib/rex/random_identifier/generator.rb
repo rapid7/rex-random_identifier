@@ -171,10 +171,20 @@ class Rex::RandomIdentifier::Generator
       end
       # Try to make another one if it collides with a previously
       # generated one.
-      break unless @name_by_value.key?(ident) or @opts[:forbidden].include?(ident)
+      break unless @name_by_value.key?(ident) or forbid_id?(ident)
     end
 
     ident
+  end
+
+  #
+  # Check if an identifier is forbidden
+  #
+  # @param str [String] String for which to check permissions
+  #
+  # @return [Boolean] Is identifier forbidden?
+  def forbid_id?(ident = nil)
+    ident.nil? or @opts[:forbidden].any? {|f| f.match(/^#{ident}$/i) }
   end
 
 end

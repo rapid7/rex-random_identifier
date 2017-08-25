@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'timeout'
 
 
 RSpec.describe Rex::RandomIdentifier::Generator do
@@ -13,6 +14,7 @@ RSpec.describe Rex::RandomIdentifier::Generator do
   it { is_expected.to respond_to(:get) }
   it { is_expected.to respond_to(:store) }
   it { is_expected.to respond_to(:to_h) }
+  it { is_expected.to respond_to(:forbid_id?) }
 
   describe "#generate" do
     it "should respect :min_length" do

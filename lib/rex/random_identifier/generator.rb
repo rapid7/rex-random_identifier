@@ -33,13 +33,15 @@ class Rex::RandomIdentifier::Generator
     :min_length => 3,
     # This should be pretty universal for identifier rules
     :char_set => Rex::Text::AlphaNumeric+"_",
-    :first_char_set => Rex::Text::LowerAlpha
+    :first_char_set => Rex::Text::LowerAlpha,
+    :forbidden => []
   }
 
   # @param opts [Hash] Options, see {DefaultOpts} for default values
   # @option opts :max_length [Fixnum]
   # @option opts :min_length [Fixnum]
   # @option opts :char_set [String]
+  # @option opts :forbidden [Array]
   def initialize(opts={})
     # Holds all identifiers.
     @value_by_name = {}
@@ -82,10 +84,10 @@ class Rex::RandomIdentifier::Generator
   #   identifier. This is what you would normally call the variable if
   #   you weren't generating it.
   # @return [String]
-  def get(name)
+  def get(name, len = nil)
     return @value_by_name[name] if @value_by_name[name]
 
-    @value_by_name[name] = generate
+    @value_by_name[name] = generate(len)
     @name_by_value[@value_by_name[name]] = name
 
     @value_by_name[name]
@@ -150,7 +152,7 @@ class Rex::RandomIdentifier::Generator
   # @return [String] A string that matches <tt>[a-z][a-zA-Z0-9_]*</tt>
   # @yield [String] The identifier before uniqueness checks. This allows
   #   you to modify the value and still avoid collisions.
-  def generate(len=nil)
+  def generate(len = nil)
     raise ArgumentError, "len must be positive integer" if len && len < 1
     raise ExhaustedSpaceError if @value_by_name.length >= @max_permutations
 
@@ -169,10 +171,20 @@ class Rex::RandomIdentifier::Generator
       end
       # Try to make another one if it collides with a previously
       # generated one.
-      break unless @name_by_value.key?(ident)
+      break unless @name_by_value.key?(ident) or forbid_id?(ident)
     end
 
     ident
+  end
+
+  #
+  # Check if an identifier is forbidden
+  #
+  # @param str [String] String for which to check permissions
+  #
+  # @return [Boolean] Is identifier forbidden?
+  def forbid_id?(ident = nil)
+    ident.nil? or @opts[:forbidden].any? {|f| f.match(/^#{ident}$/i) }
   end
 
 end

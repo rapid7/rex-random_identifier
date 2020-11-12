@@ -6,8 +6,8 @@ require 'rex/random_identifier/version'
 Gem::Specification.new do |spec|
   spec.name          = "rex-random_identifier"
   spec.version       = Rex::RandomIdentifier::VERSION
-  spec.authors       = ["David 'thelightcosine' Maloney"]
-  spec.email         = ["DMaloney@rapid7.com"]
+  spec.authors       = ['Metasploit Hackers']
+  spec.email         = ['msfdev@metasploit.com']
 
   spec.summary       = %q{Random Identifier Generator}
   spec.description   = %q{Ruby Exploitation(Rex) library for generating Random identifier strings}
@@ -19,9 +19,8 @@ Gem::Specification.new do |spec|
 
   spec.required_ruby_version = '>= 2.2.0'
 
-  spec.add_development_dependency "bundler", "~> 1.12"
-  spec.add_development_dependency "rake", "~> 10.0"
-  spec.add_development_dependency "rspec", "~> 3.0"
+  spec.add_development_dependency "rake"
+  spec.add_development_dependency "rspec"
 
   spec.add_runtime_dependency "rex-text"
 end

@@ -4,8 +4,11 @@ require 'timeout'
 
 
 RSpec.describe Rex::RandomIdentifier::Generator do
-  let(:options) do
+  let(:default_options) do
     { :min_length => 10, :max_length => 20 }
+  end
+  let(:options) do
+    default_options
   end
 
   subject(:rig) { described_class.new(options) }
@@ -16,6 +19,16 @@ RSpec.describe Rex::RandomIdentifier::Generator do
   it { is_expected.to respond_to(:store) }
   it { is_expected.to respond_to(:to_h) }
   it { is_expected.to respond_to(:forbid_id?) }
+
+  describe '.new' do
+    it "should raise an exception when the language is not supported" do
+      expect { described_class.new(language: :abc) }.to raise_exception ArgumentError
+    end
+
+    it "should not raise an exception when the language is supported" do
+      expect { described_class.new(language: :jsp) }.to_not raise_exception ArgumentError
+    end
+  end
 
   describe "#generate" do
     it "should respect :min_length" do
@@ -141,4 +154,47 @@ RSpec.describe Rex::RandomIdentifier::Generator do
     end
   end
 
+  describe "#forbid_id?" do
+    [
+      {
+        language: :default,
+        tests: [
+          { ident: 'abstract', expected: false },
+          { ident: 'null', expected: false },
+          { ident: '_', expected: false },
+          { ident: 'session', expected: false },
+        ]
+      },
+      {
+        language: :java,
+        tests: [
+          { ident: 'abstract', expected: true },
+          { ident: 'null', expected: true },
+          { ident: '_', expected: true },
+          { ident: 'session', expected: false },
+        ]
+      },
+      {
+        language: :jsp,
+        tests: [
+          { ident: 'abstract', expected: true },
+          { ident: 'null', expected: true },
+          { ident: '_', expected: true },
+          { ident: 'session', expected: true },
+        ]
+      }
+    ].each do |scenario|
+      context "when the language is #{scenario[:language]}" do
+        let(:options) do
+          default_options.merge(language: scenario[:language])
+        end
+
+        scenario[:tests].each do |test|
+          it "returns #{test[:expected]} for the identifier #{test[:ident]}" do
+            expect(rig.forbid_id?(test[:ident])).to eq(test[:expected])
+          end
+        end
+      end
+    end
+  end
 end

@@ -34,10 +34,42 @@ class Rex::RandomIdentifier::Generator
     # This should be pretty universal for identifier rules
     :char_set => Rex::Text::AlphaNumeric+"_",
     :first_char_set => Rex::Text::LowerAlpha,
-    :forbidden => []
+    :forbidden => [].freeze
+  }
+
+  JavaOpts = DefaultOpts.merge(
+    forbidden: (
+      DefaultOpts[:forbidden] +
+      %w[
+        abstract assert boolean break byte case catch char class const
+        continue default do double else enum extends false final finally
+        float for goto if implements import instanceof int interface long
+        native new null package private protected public return short
+        static strictfp super switch synchronized this throw throws
+        transient true try void volatile while _
+      ]
+    ).uniq.freeze
+  )
+
+  JSPOpts = JavaOpts.merge(
+    forbidden: (
+      JavaOpts[:forbidden] +
+      # Reserved Words for Implicit Objects
+      # https://docs.oracle.com/cd/E13222_01/wls/docs90/webapp/reference.html#66991
+      %w[
+        application config out page pageContext request response session var
+      ]
+    ).uniq.freeze
+  )
+
+  Opts = {
+    default: DefaultOpts,
+    java: JavaOpts,
+    jsp: JSPOpts
   }
 
   # @param opts [Hash] Options, see {DefaultOpts} for default values
+  # @option opts :language [Symbol] See the {Opts} keys for supported languages
   # @option opts :max_length [Fixnum]
   # @option opts :min_length [Fixnum]
   # @option opts :char_set [String]
@@ -49,7 +81,12 @@ class Rex::RandomIdentifier::Generator
     # having to search through the whole list of values
     @name_by_value = {}
 
-    @opts = DefaultOpts.merge(opts)
+    language = opts[:language] || :default
+    unless Opts.has_key?(language)
+      raise ArgumentError, "Language option #{language} is not supported. Expected one of #{Opts.keys}"
+    end
+    @opts = Opts[language]
+    @opts = @opts.merge(opts)
     if @opts[:min_length] < 1 || @opts[:max_length] < 1 || @opts[:max_length] < @opts[:min_length]
       raise ArgumentError, "Invalid length options"
     end

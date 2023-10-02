@@ -1,0 +1,16 @@
+---
+info:
+  title: Rex Random Identifier
+  description: Rex Library for generating strings that conform to most standards for
+    an identifier
+  x-cortex-git:
+    github:
+      alias: r7org
+      repository: rapid7/rex-random_identifier
+  x-cortex-tag: rex-random-identifier
+  x-cortex-type: service
+  x-cortex-domain-parents:
+  - tag: metasploit
+openapi: 3.0.1
+servers:
+- url: "/"

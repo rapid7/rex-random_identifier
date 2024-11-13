@@ -65,30 +65,12 @@ class Rex::RandomIdentifier::Generator
   JavaScriptOpts = JavaOpts.merge(
     forbidden: (
       JavaOpts[:forbidden] +
-        # JavaScript Reserved Words + JavaScript Objects, Properties, and Methods + Java Reserved Words + Other Reserved Words + HTML Event Handlers
-        # https://www.w3schools.com/js/js_reserved.asp
+        # https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Lexical_grammar#reserved_words
         %w[
-          arguments await debugger delete eval export function in let typeof var with yield
-
-          Array Date eval function hasOwnProperty Infinity isFinite isNaN
-          isPrototypeOf length Math NaN name Number Object prototype
-          String toString undefined valueOf
-
-          getClass java JavaArray javaClass JavaObject JavaPackage
-
-          alert all anchor anchors area assign blur button checkbox clearInterval clearTimeout clientInformation
-          close closed confirm constructor crypto decodeURI decodeURIComponent defaultStatus
-          document element elements embed embeds encodeURI encodeURIComponent escape
-          event fileUpload focus form forms frame innerHeight innerWidth
-          layer layers link location mimeTypes navigate navigator frames
-          frameRate hidden history image images offscreenBuffering open opener
-          option outerHeight outerWidth packages pageXOffset pageYOffset parent parseFloat
-          parseInt password pkcs11 plugin  prompt propertyIsEnum radio reset
-          screenX screenY scroll secure select self setInterval setTimeout
-          status submit taint text  textarea top unescape untaint window
-
-          onblur onclick onerror onfocus onkeydown onkeypress onkeyup onmouseover
-          onload onmouseup onmousedown onsubmit
+          const continue debugger default delete do else export extends false finally for function if import in
+          instanceof new null return super switch this throw true try typeof var void while with let static yield
+          await arguments as async eval from get of set enum implements interface package private protected public
+          abstract boolean byte char double final float goto int long native short synchronized throws transient volatile
       ]
     ).uniq.freeze
   )

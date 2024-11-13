@@ -62,15 +62,21 @@ class Rex::RandomIdentifier::Generator
     ).uniq.freeze
   )
 
-  JavaScriptOpts = JavaOpts.merge(
+  JavaScriptOpts = DefaultOpts.merge(
     forbidden: (
-      JavaOpts[:forbidden] +
         # https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Lexical_grammar#reserved_words
+        # https://developer.mozilla.org/en-US/docs/Web/API/Window Instance methods
         %w[
           const continue debugger default delete do else export extends false finally for function if import in
           instanceof new null return super switch this throw true try typeof var void while with let static yield
           await arguments as async eval from get of set enum implements interface package private protected public
           abstract boolean byte char double final float goto int long native short synchronized throws transient volatile
+          atob alert blur btoa cancelAnimationFrame cancelIdleCallback clearInterval clearTimeout close confirm
+          createImageBitmap dump fetch find focus getComputedStyle getDefaultComputedStyle getScreenDetails getSelection
+          matchMedia moveBy moveTo open postMessage print prompt queryLocalFonts queueMicrotask reportError
+          requestAnimationFrame requestIdleCallback resizeBy resizeTo scroll scrollBy scrollByLines scrollByPages
+          scrollTo setInterval setTimeout showDirectoryPicker showOpenFilePicker showSaveFilePicker sizeToContent
+          stop structuredClone updateCommands
       ]
     ).uniq.freeze
   )

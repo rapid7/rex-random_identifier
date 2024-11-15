@@ -70,8 +70,8 @@ class Rex::RandomIdentifier::Generator
           const continue debugger default delete do else export extends false finally for function if import in
           instanceof new null return super switch this throw true try typeof var void while with let static yield
           await arguments as async eval from get of set enum implements interface package private protected public
-          abstract boolean byte char double final float goto int long native short synchronized throws transient volatile
-          atob alert blur btoa cancelAnimationFrame cancelIdleCallback clearInterval clearTimeout close confirm
+          abstract boolean byte char double final float goto int long native short synchronized throws transient
+          volatile atob alert blur btoa cancelAnimationFrame cancelIdleCallback clearInterval clearTimeout close confirm
           createImageBitmap dump fetch find focus getComputedStyle getDefaultComputedStyle getScreenDetails getSelection
           matchMedia moveBy moveTo open postMessage print prompt queryLocalFonts queueMicrotask reportError
           requestAnimationFrame requestIdleCallback resizeBy resizeTo scroll scrollBy scrollByLines scrollByPages
@@ -80,12 +80,43 @@ class Rex::RandomIdentifier::Generator
       ]
     ).uniq.freeze
   )
+  PythonOpts = DefaultOpts.merge(
+    forbidden: (
+      # words generated for Python 3.9+ using the keyword module
+      # https://docs.python.org/3/library/keyword.html
+      # import keyword; print(' '.join(sorted(word for word in (keyword.kwlist + keyword.softkwlist + dir(__builtins__)) if not word.startswith('_'))))
+      %w[
+        ArithmeticError AssertionError AttributeError BaseException BaseExceptionGroup BlockingIOError BrokenPipeError
+        BufferError BytesWarning ChildProcessError ConnectionAbortedError ConnectionError ConnectionRefusedError
+        ConnectionResetError DeprecationWarning EOFError Ellipsis EncodingWarning EnvironmentError Exception
+        ExceptionGroup False FileExistsError FileNotFoundError FloatingPointError FutureWarning GeneratorExit IOError
+        ImportError ImportWarning IndentationError IndexError InterruptedError IsADirectoryError KeyError
+        KeyboardInterrupt LookupError MemoryError ModuleNotFoundError NameError None NotADirectoryError NotImplemented
+        NotImplementedError OSError OverflowError PendingDeprecationWarning PermissionError ProcessLookupError
+        RecursionError ReferenceError ResourceWarning RuntimeError RuntimeWarning StopAsyncIteration StopIteration
+        SyntaxError SyntaxWarning SystemError SystemExit TabError TimeoutError True TypeError UnboundLocalError
+        UnicodeDecodeError UnicodeEncodeError UnicodeError UnicodeTranslateError UnicodeWarning UserWarning ValueError
+        Warning ZeroDivisionError abs aiter all and anext any as ascii assert async await bin bool break breakpoint
+        bytearray bytes callable case chr class classmethod compile complex continue copyright credits def del delattr
+        dict dir divmod elif else enumerate eval except exec exit filter finally float for format from frozenset getattr
+        global globals hasattr hash help hex id if import in input int is isinstance issubclass iter lambda len license
+        list locals map match max memoryview min next nonlocal not object oct open or ord pass pow print property quit
+        raise range repr return reversed round set setattr slice sorted staticmethod str sum super try tuple type type
+        vars while with yield zip
+      ] + # plus words specific to Python 2
+      %w[
+        StandardError basestring cmp coerce execfile exit file intern long print raw_input reduce reload unichr unicode
+        xrange
+      ]
+    ).freeze
+  )
 
   Opts = {
     default: DefaultOpts,
     java: JavaOpts,
     jsp: JSPOpts,
-    javascript: JavaScriptOpts
+    javascript: JavaScriptOpts,
+    python: PythonOpts
   }
 
   # @param opts [Hash] Options, see {DefaultOpts} for default values

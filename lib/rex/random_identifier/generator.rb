@@ -34,7 +34,8 @@ class Rex::RandomIdentifier::Generator
     # This should be pretty universal for identifier rules
     :char_set => Rex::Text::AlphaNumeric+"_",
     :first_char_set => Rex::Text::LowerAlpha,
-    :forbidden => [].freeze
+    :forbidden => [].freeze,
+    :prefix => ''
   }
 
   JavaOpts = DefaultOpts.merge(
@@ -111,11 +112,19 @@ class Rex::RandomIdentifier::Generator
     ).freeze
   )
 
+  PHPOpts = DefaultOpts.merge(
+    prefix: '$',
+    first_char_set: Rex::Text::Alpha + '_'
+    # nothing seems to be forbidden because everything is prefixed with '$'
+    # see: https://www.php.net/manual/en/reserved.php
+  )
+
   Opts = {
     default: DefaultOpts,
     java: JavaOpts,
     jsp: JSPOpts,
     javascript: JavaScriptOpts,
+    php: PHPOpts,
     python: PythonOpts
   }
 
@@ -248,6 +257,7 @@ class Rex::RandomIdentifier::Generator
     len ||= rand(@opts[:min_length] .. (@opts[:max_length]))
 
     ident = ""
+    ident << @opts[:prefix]
 
     # XXX: Infinite loop if block returns only values we've already
     # generated.

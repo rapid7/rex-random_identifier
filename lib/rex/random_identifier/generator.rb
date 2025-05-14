@@ -34,7 +34,8 @@ class Rex::RandomIdentifier::Generator
     # This should be pretty universal for identifier rules
     :char_set => Rex::Text::AlphaNumeric+"_",
     :first_char_set => Rex::Text::LowerAlpha,
-    :forbidden => [].freeze
+    :forbidden => [].freeze,
+    :prefix => ''
   }
 
   JavaOpts = DefaultOpts.merge(
@@ -111,11 +112,27 @@ class Rex::RandomIdentifier::Generator
     ).freeze
   )
 
+  PHPOpts = DefaultOpts.merge(
+    prefix: '$',
+    first_char_set: Rex::Text::Alpha + '_',
+    # see: https://www.php.net/manual/en/reserved.php
+    # see: https://www.php.net/manual/en/reserved.variables.php
+    forbidden: (
+      %w[
+        $GLOBALS $_SERVER $_GET $_POST $_FILES $_REQUEST $_SESSION $_ENV $_COOKIE
+        $HTTP_GET_VARS $HTTP_POST_VARS $HTTP_COOKIE_VARS $HTTP_SERVER_VARS
+        $HTTP_ENV_VARS $HTTP_SESSION_VARS $HTTP_POST_FILES $HTTP_RAW_POST_DATA
+        $php_errormsg $http_response_header $argc $argv $this
+      ]
+    )
+  )
+
   Opts = {
     default: DefaultOpts,
     java: JavaOpts,
     jsp: JSPOpts,
     javascript: JavaScriptOpts,
+    php: PHPOpts,
     python: PythonOpts
   }
 
@@ -247,12 +264,14 @@ class Rex::RandomIdentifier::Generator
     # pick a random length within the limits
     len ||= rand(@opts[:min_length] .. (@opts[:max_length]))
 
-    ident = ""
+    ident = ''
 
     # XXX: Infinite loop if block returns only values we've already
     # generated.
     loop do
-      ident  = Rex::Text.rand_base(1, "", @opts[:first_char_set])
+      ident  = +''
+      ident << @opts[:prefix]
+      ident << Rex::Text.rand_base(1, "", @opts[:first_char_set])
       ident << Rex::Text.rand_base(len-1, "", @opts[:char_set])
       if block_given?
         ident = yield ident

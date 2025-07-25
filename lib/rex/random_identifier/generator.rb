@@ -127,13 +127,149 @@ class Rex::RandomIdentifier::Generator
     )
   )
 
+  PowershellOpts = DefaultOpts.merge(
+    forbidden: (
+      # PowerShell reserved words and language keywords
+      # https://docs.microsoft.com/en-us/powershell/scripting/lang-spec/chapter-02
+      # https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_reserved_words
+      %w[
+        assembly base begin break catch class command configuration continue data define do dynamicparam else elseif
+        end enum exit filter finally for foreach from function hidden if in inlinescript interface module namespace
+        parallel param private process public return sequence static switch throw trap try type until using var while
+        workflow bool byte char decimal double float int long object sbyte short string uint ulong ushort
+      ] +
+        # Common .NET type names used in PowerShell
+        # https://learn.microsoft.com/en-us/dotnet/api/system#classes
+        %w[
+        accessviolationexception activator aggregateexception appcontext appdomain appdomainsetup appdomainunloadedexception
+        applicationexception applicationid argumentexception argumentnullexception argumentoutofrangeexception
+        arithmeticexception array arraytypemismatchexception assemblyloadeventargs attribute attributeusageattribute
+        badimageformatexception bitconverter buffer cannotunloadappdomainexception charenumerator clscompliantattribute
+        console consolecanceleventargs contextboundobject contextmarshalexception contextstaticattribute convert
+        datamisalignedexception dbnull delegate dividebyzeroexception dllnotfoundexception duplicatewaitobjectexception
+        entrypointnotfoundexception enum environment eventargs exception executionengineexception fieldaccessexception
+        filestyleuriparser flagsattribute formatexception formattablestring ftpstyleuriparser gc genericheruriparser
+        gopherstyleuriparser httpstyleuriparser indexoutofrangeexception insufficientexecutionstackexception
+        insufficientmemoryexception invalidcastexception invalidoperationexception invalidprogramexception
+        invalidtimezoneexception lazy ldapstyleuriparser loaderoptimizationattribute localdatastoreslot
+        marshalbyrefobject math mathf memberaccessexception memoryextensions methodaccessexception missingfieldexception
+        missingmemberexception missingmethodexception mtathreadattribute multicastdelegate multicastnotsupportedexception
+        netpipestyleuriparser nettcpstyleuriparser newsstyleuriparser nonserializedattribute notfinitenumberexception
+        notimplementedexception notsupportedexception nullable nullreferenceexception object objectdisposedexception
+        obsoleteattribute operatingsystem operationcanceledexception outofmemoryexception overflowexception
+        paramarrayattribute platformnotsupportedexception progress random rankexception resolveeventargs
+        serializableattribute stackoverflowexception stathreadattribute string stringcomparer stringnormalizationextensions
+        systemexception threadstaticattribute timeoutexception timeprovider timezone timezoneinfo
+        timezonenotfoundexception tuple tupleextensions type typeaccessexception typeinitializationexception
+        typeloadexception typeunloadedexception unauthorizedaccessexception unhandledexceptioneventargs uri uribuilder
+        uriformatexception uriparser uritypeconverter valuetype version weakreference
+        array datetime hashtable psobject scriptblock timespan void xml
+      ] +
+        # Common .NET struct types used in PowerShell
+        # https://learn.microsoft.com/en-us/dotnet/api/system#structs
+        %w[
+        argiterator boolean byte char consolekey consolekeyinfo datetime datetimeoffset dayofweek decimal double
+        guid int16 int32 int64 intptr memory nullable range rune runtime sbyte single timeonly timespan
+        typedreference uint16 uint32 uint64 uintptr valuetuple void arithmeticexception argumentexception
+        argumentnullexception argumentoutofrangeexception badimageformatexception cannotunloadappdomainexception
+        contextmarshalexception datamisalignedexception dividebyzeroexception dllnotfoundexception
+        duplicatewaitobjectexception entrypointnotfoundexception executionengineexception fieldaccessexception
+        formatexception indexoutofrangeexception insufficientexecutionstackexception insufficientmemoryexception
+        invalidcastexception invalidoperationexception invalidprogramexception invalidtimezoneexception
+        memberaccessexception methodaccessexception missingfieldexception missingmemberexception
+        missingmethodexception multicastnotsupportedexception notfinitenumberexception notimplementedexception
+        notsupportedexception nullreferenceexception objectdisposedexception operationcanceledexception
+        outofmemoryexception overflowexception platformnotsupportedexception rankexception stackoverflowexception
+        systemexception timeoutexception typeaccessexception typeinitializationexception typeloadexception
+        typeunloadedexception unauthorizedaccessexception
+      ] +
+        # Common .NET interface types used in PowerShell
+        # https://learn.microsoft.com/en-us/dotnet/api/system#interfaces
+        %w[
+        iasyncresult icloneable icomparable icomparer iconvertible icustomformatter idisposable iequalitycomparer
+        iformattable iformatprovider iserviceprovider ienumerable ienumerator icollection ilist idictionary
+        ireadonlycollection ireadonlylist ireadonlydictionary iset iproducerconsumercollection
+        iconcurrentcollection inotifypropertychanged inotifycollectionchanged iobserver iobservable
+        ituple istructuralcomparable istructuralequatable ispanformattable ibinaryinteger ibinaryfloatingpoint
+        ibitwiseoperators icomparisonoperators iequalityoperators iincrementoperators iminmaxvalue
+        inumberbase iadditionoperators isubtractionoperators imultiplicationoperators idivisionoperators
+        imodaoperators ishiftoperators iunaryoperators iparsable ispanparsable iformatable
+      ] +
+        # Common .NET enum types used in PowerShell
+        # https://learn.microsoft.com/en-us/dotnet/api/system#enums
+        %w[
+        attributetargets base64formattingoptions consolecolor datetimekind dayofweek environmentspecialfolder
+        environmentvariabletarget gctype gcgeneration genotificationstatus globalizationmode
+        loaderoption midsreamstarttype normalizedform operatingsystem platformid processorarchitecture
+        stringcomparison stringsplitopions typecode urikind uricomponents urihostnametype uriformat
+        comparetoptions culturedupinfallbackstyles datetimestyles numberstyles runtimeidentifiertype
+        securityruleset targetframeworkmoniker timezonefindtype unmanagedfunctionpointercallingconvention
+        fileattributes fileaccess filemode fileshare fileaction filetype searchoption directoryoption
+        consolecanceltype consolespecialkey consolemodifiers
+      ] +
+        # Common .NET delegate types used in PowerShell
+        # https://learn.microsoft.com/en-us/dotnet/api/system#delegates
+        %w[
+        action func predicate comparison converter eventhandler asynccallback crossapplicationstringproc
+        waitortimercallback timerproc unhandledexceptioneventhandler assemblybindingprovider resolvehandler
+        convolecallback appdomainunloadhandler assemblyhandler modulehandler contexthandler
+        loadeventhandler unloadeventhandler begininvokedelegate endinvokedelegate asyncresultdelegate
+        predefineddelegate delegateserial multidelgate singletondelegate
+      ] +
+        # PowerShell variable scope keywords
+        # https://docs.microsoft.com/en-us/powershell/scripting/lang-spec/chapter-02
+        %w[
+        global local private script using workflow
+      ] +
+        # PowerShell automatic variables
+        # https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_automatic_variables
+        %w[
+        args consolefilename error executioncontext false home host input lastexitcode matches myinvocation nestedpromptlevel
+        null pid profile pscmdlet pscommandpath pshome psscriptroot psversiontable pwd shellid stacktrace true
+      ] +
+        # PowerShell preference variables
+        # https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_preference_variables
+        %w[
+        confirmpreference debugpreference erroractionpreference errorview formatenumerationlimit informationpreference
+        logcommandhealthevent logcommandlifecycleevent lopenginehealthevent logenginelifecycleevent logproviderhealthevent
+        logproviderlifecycleevent maximumhistorycount ofs outputencoding progresspreference psdefaultparametervalues
+        psemailserver psmoduleautoloadingpreference psnativecommandargumentpassing psnativecommanduseerroractionpreference
+        pssessionapplicationname pssessionconfigurationname pssessionoption psstyle transcript verbosepreference
+       specsapreference whatifpreference
+      ] +
+        # Common PowerShell cmdlets that should be avoided as identifiers
+        # https://docs.microsoft.com/en-us/powershell/scripting/developer/cmdlet/approved-verbs-for-windows-powershell-commands
+        %w[
+        add clear copy export find format get import invoke join move new out read remove rename select set sort
+        split start stop test where write compare group measure tee convertfrom convertto foreach object sort unique
+        first last skip skipuntil takewhile
+      ] +
+        # Common PowerShell cmdlet aliases and shortnames
+        # https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_aliases
+        %w[
+        cat cd chdir clc clhy cli clp cls clv cnsn compare copy cp cpi cpp curl cwmi dbp del diff dir echo epal epcsv
+        fc fhx fl foreach ft fw gal gbp gc gci gcm gcs gdr ghy gi gjb gl gm gmo gp gps gpv group gsn gsnp gsv gtz gu gv
+        gwmi h history icm iex ihy ii ipal ipcsv irm ise iwmi iwr kill lp ls man md measure mi mount move mp mv nal ndr
+        ni nmo npssc nsn nv ogv oh popd pushd pwd r rcjb rcsn rd rdr ren ri rjb rm rmdir rmo rni rnp rp rsn rsnp rv
+        rvpa rwmi sajb sal saps sasv sbp sc scb select set shcm si sl sleep sls sort sp spjb spps spsv start sv swmi
+        tee type wget where wjb write
+      ] +
+        # PowerShell operators (word-based)
+        # https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_operators
+        %w[
+        and band bnot bor bxor not or xor eq ne gt ge lt le like notlike match notmatch contains notcontains in notin
+        replace split join is isnot as
+      ]
+    ).uniq.freeze
+  )
+
   Opts = {
     default: DefaultOpts,
     java: JavaOpts,
     jsp: JSPOpts,
     javascript: JavaScriptOpts,
-    php: PHPOpts,
-    python: PythonOpts
+    python: PythonOpts,
+    powershell: PowershellOpts
   }
 
   # @param opts [Hash] Options, see {DefaultOpts} for default values

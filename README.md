@@ -23,16 +23,15 @@ Or install it yourself as:
 
 Example
 ```ruby
-   vars = Rex::RandomIdentifierGenerator.new
-   asp_code = <<-END_CODE
-     Sub #{vars[:func]}()
-       Dim #{vars[:fso]}
-       Set #{vars[:fso]} = CreateObject("Scripting.FileSystemObject")
-       ...
-     End Sub
-     #{vars[:func]}
-   END_CODE
-#
+vars = Rex::RandomIdentifierGenerator.new
+asp_code = <<-END_CODE
+  Sub #{vars[:func]}()
+    Dim #{vars[:fso]}
+    Set #{vars[:fso]} = CreateObject("Scripting.FileSystemObject")
+    ...
+  End Sub
+  #{vars[:func]}
+END_CODE
 ```
 
 ## Development
@@ -44,4 +43,3 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/rapid7/rex-random_identifier. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
-

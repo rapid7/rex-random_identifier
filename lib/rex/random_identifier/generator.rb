@@ -427,7 +427,8 @@ class Rex::RandomIdentifier::Generator
   #
   # @return [Boolean] Is identifier forbidden?
   def forbid_id?(ident = nil)
-    ident.nil? or @opts[:forbidden].any? {|f| f.match(/^#{ident}$/i) }
+    return true if ident.nil?
+    @opts[:forbidden].any? { |f| f.casecmp?(ident) }
   end
 
 end

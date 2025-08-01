@@ -182,6 +182,20 @@ RSpec.describe Rex::RandomIdentifier::Generator do
           { ident: '_', expected: true },
           { ident: 'session', expected: true },
         ]
+      },
+      {
+        language: :powershell,
+        tests: [
+          { ident: 'if', expected: true },
+          { ident: 'while', expected: true },
+          { ident: 'function', expected: true },
+          { ident: 'param', expected: true },
+          { ident: 'array', expected: true },
+          { ident: 'string', expected: true },
+          { ident: 'args', expected: true },
+          { ident: 'eventargs', expected: true },
+          { ident: 'foovar', expected: false },
+        ]
       }
     ].each do |scenario|
       context "when the language is #{scenario[:language]}" do

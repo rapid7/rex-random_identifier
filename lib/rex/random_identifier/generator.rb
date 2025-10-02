@@ -269,7 +269,8 @@ class Rex::RandomIdentifier::Generator
     jsp: JSPOpts,
     javascript: JavaScriptOpts,
     python: PythonOpts,
-    powershell: PowershellOpts
+    powershell: PowershellOpts,
+    php: PHPOpts
   }
 
   # @param opts [Hash] Options, see {DefaultOpts} for default values
